@@ -17,15 +17,12 @@ package org.teavm.classlib.java.lang;
 
 import org.teavm.dom.browser.Window;
 import org.teavm.javascript.spi.Async;
+import org.teavm.javascript.spi.GeneratedBy;
 
 import org.teavm.javascript.spi.Rename;
 import org.teavm.javascript.spi.Superclass;
 import org.teavm.jso.JS;
-import org.teavm.jso.JSArray;
-import org.teavm.jso.JSFunctor;
-import org.teavm.jso.JSObject;
 import org.teavm.platform.Platform;
-import org.teavm.platform.async.AsyncCallback;
 
 
 /**
@@ -38,13 +35,14 @@ public class TObject {
     private TThread owner;
     private TObject monitorLock;
     private int monitorCount=0;
-    private JSArray<NotifyListener> notifyListeners;
+    /*private JSArray<NotifyListener> notifyListeners;*/
     private static final Window window = (Window)JS.getGlobal();
     
+    /*
     @JSFunctor
     private static interface NotifyListener extends JSObject{
         void handleNotify();
-    }
+    }*/
     
     static void monitorEnter(TObject o){
         if ( o.monitorLock == null ){
@@ -119,15 +117,17 @@ public class TObject {
     }
 
     @Rename("notify")
-    public final void notify0(){
+    @GeneratedBy(ObjectNativeGenerator.class)
+    public final native void notify0();/*{
         if (notifyListeners != null && notifyListeners.getLength() > 0){
             notifyListeners.shift().handleNotify();
         }
-    }
+    }*/
 
     
     @Rename("notifyAll")
-    public final void notifyAll0(){
+    @GeneratedBy(ObjectNativeGenerator.class)
+    public final native void notifyAll0();/*{
         if (notifyListeners != null){
             JSArray<NotifyListener> listeners = window.newArray();
             while (notifyListeners.getLength() > 0 ){
@@ -138,11 +138,11 @@ public class TObject {
             }
         }
         
-    }
+    }*/
     
     
     @Rename("wait")
-    public final void wait0(long timeout) throws TInterruptedException{
+    public final  void wait0(long timeout) throws TInterruptedException{
         try {
             wait(timeout, 0);
         } catch ( InterruptedException ex){
@@ -152,9 +152,10 @@ public class TObject {
     
     @Async
     @Rename("wait")
+    @GeneratedBy(ObjectNativeGenerator.class)
     public native final void wait0(long timeout, int nanos) throws TInterruptedException;
 
-    
+    /*
     @Rename("wait")
     public final void wait0(long timeout, int nanos, final AsyncCallback<Void> callback){
         if ( notifyListeners == null ){
@@ -176,6 +177,7 @@ public class TObject {
 
         });
     }
+    */
     
     @Rename("wait")
     public final void wait0() throws TInterruptedException {
