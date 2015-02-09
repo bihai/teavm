@@ -54,6 +54,7 @@ public final class AsyncProgram {
             @Override
             public void run() {
                 try {
+                    System.out.println("Inside thread "+Thread.currentThread().getName());
                     doRun(lock);
                 } catch (InterruptedException ex){
                     System.out.println(ex.getMessage());
