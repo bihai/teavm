@@ -19,6 +19,9 @@ import org.teavm.dom.browser.TimerHandler;
 import org.teavm.dom.browser.Window;
 import org.teavm.javascript.spi.Async;
 import org.teavm.jso.JS;
+import org.teavm.jso.JSFunctor;
+import org.teavm.jso.JSMethod;
+import org.teavm.jso.JSObject;
 import org.teavm.platform.async.AsyncCallback;
 
 
@@ -37,6 +40,17 @@ public class TThread extends TObject implements TRunnable {
 
     private TString name;
     private TRunnable target;
+    
+    private static interface RootInvoker extends JSObject {
+        @JSMethod("$rt_rootInvocationAdapter")
+        public LaunchFunctor rootInvocationAdapter(JSObject method);
+    }
+    
+    @JSFunctor
+    private static interface LaunchFunctor extends JSObject {
+        public void launch();
+    }
+    
 
     public TThread() {
         this(null, null);
@@ -57,9 +71,18 @@ public class TThread extends TObject implements TRunnable {
     }
 
     public void start(){
+        final TThread self = this;
         window.setTimeout(new TimerHandler() {
             @Override public void onTimer() {
-                launch(TThread.this);
+                RootInvoker rootInvocationAdapter = (RootInvoker)window;
+                rootInvocationAdapter.rootInvocationAdapter(new LaunchFunctor(){
+
+                    @Override
+                    public void launch() {
+                        TThread.launch(self);
+                    }
+                    
+                }).launch();
             }
         }, 0);
     }

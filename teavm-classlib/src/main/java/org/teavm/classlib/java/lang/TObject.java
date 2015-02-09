@@ -39,7 +39,7 @@ public class TObject {
     private TObject monitorLock;
     private int monitorCount=0;
     private JSArray<NotifyListener> notifyListeners;
-    private final Window window = (Window)JS.getGlobal();
+    private static final Window window = (Window)JS.getGlobal();
     
     @JSFunctor
     private static interface NotifyListener extends JSObject{
