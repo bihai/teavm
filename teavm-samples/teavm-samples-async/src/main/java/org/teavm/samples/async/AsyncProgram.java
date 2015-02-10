@@ -85,9 +85,9 @@ public final class AsyncProgram {
         System.out.println("Finished another 5 second sleep");
         
         synchronized(lock){
-            System.out.println("Inside locked section of thread "+Thread.currentThread().getName());
+            System.out.println("Inside locked section of thread "+Thread.currentThread());
             Thread.sleep(2000);
-            System.out.println("Finished locked section of thread "+Thread.currentThread().getName());
+            System.out.println("Finished locked section of thread "+Thread.currentThread());
         }
     }
     

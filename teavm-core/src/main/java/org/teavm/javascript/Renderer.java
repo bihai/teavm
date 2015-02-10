@@ -65,8 +65,7 @@ public class Renderer implements ExprVisitor, StatementVisitor, RenderingContext
             try {
                 MethodReference monitorEnterRef = new MethodReference(
                         Object.class, "monitorEnter", Object.class, void.class);
-                
-                writer.appendMethodBody(monitorEnterRef).append("(");
+                writer.append("$rt_rootInvocationAdapter(").appendMethodBody(monitorEnterRef).append(")(");
                 statement.getObjectRef().acceptVisitor(this);
                 writer.append(");").softNewLine();
                 

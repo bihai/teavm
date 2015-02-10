@@ -92,14 +92,14 @@ public class TThread extends TObject implements TRunnable {
     }*/
 
     private static void launch(TThread thread) {
-        try {
+        //try {
             activeCount++;
             setCurrentThread(thread);
             thread.run();
-        } finally {
+        //} finally {
             activeCount--;
             setCurrentThread(mainThread);
-        }
+        //}
         
         
     }

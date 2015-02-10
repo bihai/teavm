@@ -43,18 +43,30 @@ public class TObject {
     private static interface NotifyListener extends JSObject{
         void handleNotify();
     }*/
-    
+    @Async
     static void monitorEnter(TObject o){
         if ( o.monitorLock == null ){
             o.monitorLock = new TObject();
         }
+        System.out.println("Thread "+Thread.currentThread()+" waiting  on lock for "+o);
+        System.out.println("Lock owned by "+o.owner);
+        if ( o.owner != null ){
+            System.out.println(o.owner.getName());
+        }
         while (o.owner != null && o.owner != TThread.currentThread() ){
             try {
+                System.out.println(Thread.currentThread()+" waiting on lock");
                 o.monitorLock.wait();
             } catch (InterruptedException ex) {
-                
+                throw new RuntimeException("Interrupted", ex);
             }
         }
+        if ( o.owner != null && o.owner != TThread.currentThread()){
+            System.out.println("Thread "+TThread.currentThread()+" has been granted a lock which is owned by "+o.owner);
+            throw new RuntimeException("Thread "+TThread.currentThread()+" has been granted a lock which is owned by "+o.owner);
+        }
+        System.out.println("Thread "+Thread.currentThread()+" obtaining lock for "+o);
+        System.out.println("The old owner was "+o.owner);
         o.owner = TThread.currentThread();
         o.monitorCount++;
         
@@ -141,7 +153,7 @@ public class TObject {
         
     }*/
     
-    
+    @Async
     @Rename("wait")
     public final  void wait0(long timeout) throws TInterruptedException{
         try {
@@ -179,7 +191,7 @@ public class TObject {
         });
     }
     */
-    
+    @Async
     @Rename("wait")
     public final void wait0() throws TInterruptedException {
         try {

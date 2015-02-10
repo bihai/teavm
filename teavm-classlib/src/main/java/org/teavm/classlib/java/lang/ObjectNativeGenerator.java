@@ -50,12 +50,24 @@ public class ObjectNativeGenerator implements Generator {
     private void generateWait(GeneratorContext context, SourceWriter writer) throws IOException {
         String pname = context.getParameterName(1);
         String obj = context.getParameterName(0);
+        MethodReference currentThreadRef = new MethodReference(
+                   Thread.class, "currentThread", Thread.class);
+        MethodReference setCurrentThreadRef = new MethodReference(
+                Thread.class, "setCurrentThread", Thread.class, void.class);
+        MethodReference getMainThreadRef = new MethodReference(Thread.class, "getMainThread", Thread.class);
+        
         writer.append("(function(){").indent().softNewLine();
         writer.append("var completed = false;").softNewLine();
+        writer.append("var currThread = ").appendMethodBody(currentThreadRef).append("();").softNewLine();
         writer.append("var retCallback = ").append(context.getCompleteContinuation()).append(";").softNewLine();
         writer.append("var callback = function(){").indent().softNewLine();
         writer.append("if (completed){return;} completed=true;").softNewLine();
+        writer.append("try {").indent().softNewLine();
+        writer.appendMethodBody(setCurrentThreadRef).append("(currThread);").softNewLine();
         writer.append("retCallback($rt_asyncResult(null));").softNewLine();
+        writer.outdent().append("} finally {").indent().softNewLine();
+        writer.appendMethodBody(setCurrentThreadRef).append("(").appendMethodBody(getMainThreadRef).append("());").softNewLine();
+        writer.outdent().append("}");
         writer.outdent().append("};").softNewLine();
         writer.append("if (").append(pname).append(">0){").indent().softNewLine();
         writer.append("$rt_setTimeout(callback, ").append(pname).append(");").softNewLine();
@@ -98,8 +110,12 @@ public class ObjectNativeGenerator implements Generator {
         String lArr = getNotifyListeners(context);
         writer.append("$rt_setTimeout(function(){").indent().softNewLine();
         writer.append("if (!").append(lArr).append("){return;}").softNewLine();
+        writer.append("var callbacks = [];").softNewLine();
         writer.append("while (").append(lArr).append(".length>0){").indent().softNewLine();
-        writer.append(lArr).append(".shift().call(null);").softNewLine();
+        writer.append("callbacks.push(").append(lArr).append(".shift());").softNewLine();
+        writer.outdent().append("}").softNewLine();
+        writer.append("while (callbacks.length>0){").indent().softNewLine();
+        writer.append("callbacks.shift().call(null);").softNewLine();
         writer.outdent().append("}");
         writer.outdent().append("}, 0);").softNewLine();
         
