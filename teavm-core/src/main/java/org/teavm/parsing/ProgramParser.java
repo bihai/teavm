@@ -1557,15 +1557,14 @@ public class ProgramParser implements VariableDebugInformation {
                     return;
                 }
                 case Opcodes.MONITORENTER: {
-                    MonitorEnterInstruction insn = new MonitorEnterInstruction();
-                    insn.setObjectRef(getVariable(popSingle()));
-                    addInstruction(insn);
+                    this.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Object", 
+                            "monitorEnter", "(Ljava/lang/Object;)V");
                     break;
+                    
                 }
                 case Opcodes.MONITOREXIT: {
-                    MonitorExitInstruction insn = new MonitorExitInstruction();
-                    insn.setObjectRef(getVariable(popSingle()));
-                    addInstruction(insn);
+                    this.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Object", 
+                            "monitorExit", "(Ljava/lang/Object;)V");
                     break;
                 }
                     
