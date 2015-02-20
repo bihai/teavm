@@ -29,6 +29,9 @@ public final class AsyncProgram {
 
     public static void main(String[] args) throws InterruptedException {
         report(Arrays.toString(args));
+        
+        uiManagerTest();
+        
         findPrimes();
         withoutAsync();
         report("");
@@ -162,5 +165,16 @@ public final class AsyncProgram {
         Thread.yield();
         report("Thread.yield called");
         throw new IllegalStateException();
+    }
+    
+    private static void uiManagerTest(){
+        report("About to create label");
+        Label l = new Label("Some text");
+        
+        UIManager uim = l.getUIManager();
+        if (uim==null){
+            throw new RuntimeException("UIManager should not be null!!!");
+        }
+        report("Successfully got UIManager "+uim);
     }
 }
